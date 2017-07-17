@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                        http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+                        http://www.springframework.org/schema/aop
+                        http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- 配置注解驱动 support MVC controllers并设定字符集和json处理类-->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/plain;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- 自动扫描  @Controller-->
+    <context:component-scan base-package="com.happy.*.controller"/>
+
+    <!--避免IE执行AJAX时，返回JSON出现下载文件 -->
+    <bean id="mappingJacksonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+    <!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="mappingJacksonHttpMessageConverter"/> <!-- JSON转换器 -->
+            </list>
+        </property>
+    </bean>
+
+    <!-- 映射静态资源 -->
+    <!--<mvc:resources mapping="/reportTemp/**" location="file:${upload.absolute.path}${report.template.path}/"/>
+    <mvc:resources mapping="/wx/tenant/reportHtml/**/*.html" location="file:${upload.absolute.path}${report.template.path}/"/>
+    <mvc:resources mapping="/wx/admin/reportHtml/**/*.html" location="file:${upload.absolute.path}${report.template.path}/"/>-->
+    <mvc:resources mapping="/images/**" location="/WEB-INF/images/" />
+    <mvc:resources mapping="/css/**" location="/WEB-INF/css/" />
+    <mvc:resources mapping="/js/**" location="/WEB-INF/js/" />
+    <mvc:resources mapping="/ueditor/**" location="/WEB-INF/ueditor/" />
+
+    <!-- 定义跳转的文件的前后缀 ，视图模式配置 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- 异常解析器 -->
+    <bean id="genericSimpleMappingExceptionResolver" class="com.happy.exception.GenericSimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="com.happy.exception.GenericException">/error/500</prop>
+                <prop key="com.happy.exception.ErrorMsgShowException">/error/errorMsgShow</prop>
+                <prop key="org.apache.shiro.authz.UnauthorizedException">/error/accessDenied</prop>
+                <prop key="java.lang.Exception">/error/500</prop>
+            </props>
+        </property>
+        <property name="defaultErrorView" value="/error/errorpage"/>
+        <property name="exceptionAttribute" value="ex"/>
+        <property name="warnLogCategory" value="EXCEPTIONRESOLVER"></property>
+    </bean>
+
+    <!-- 启用AOP -->
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+
+    <!-- 文件上传配置 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 默认编码 -->
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!-- 上传文件大小限制为31M，31*1024*1024 -->
+        <property name="maxUploadSize" value="32505856"/>
+        <!-- 内存中的最大值 -->
+        <property name="maxInMemorySize" value="4096"/>
+    </bean>
+
+    <!-- 上下文初始化 -->
+    <bean class="com.happy.util.ApplicationContextUtil"></bean>
+
+    <!-- message资源文件 -->
+    <util:properties id="resourcesProperties" location="classpath:properties/resources.properties"/>
+
+    <!-- kaptcha 验证码 -->
+    <bean id="kaptchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+        <property name="config">
+            <bean class="com.google.code.kaptcha.util.Config">
+                <constructor-arg>
+                    <props>
+                        <prop key="kaptcha.border">no</prop>
+                        <!-- <prop key="kaptcha.border.color">105,179,90</prop>   -->
+                        <prop key="kaptcha.textproducer.font.color">blue</prop>
+                        <prop key="kaptcha.image.width">100</prop>
+                        <prop key="kaptcha.image.height">30</prop>
+                        <prop key="kaptcha.noise.impl">${kaptcha.noise.impl}</prop> <!-- 去掉干扰线 -->
+                        <prop key="kaptcha.textproducer.font.size">24</prop>
+                        <prop key="kaptcha.session.key">code</prop>
+                        <prop key="kaptcha.textproducer.char.length">4</prop>
+                        <prop key="kaptcha.textproducer.char.space">4</prop>
+                        <prop key="kaptcha.textproducer.char.string">abcde23456789fhkmnwxrstABCDEFGHKMNRSTWX</prop>
+                        <prop key="kaptcha.obscurificator.impl">${kaptcha.obscurificator.impl}</prop>
+                        <prop key="kaptcha.background.clear.from">255,255,255</prop>
+                        <!-- <prop key="kaptcha.textproducer.font.names">宋体,楷体,微软雅黑</prop> -->
+                        <!-- <prop key="kaptcha.noise.colo">blue</prop>   -->
+                    </props>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
+    <!--<context:property-placeholder ignore-unresolvable="true" location="classpath*:properties/*.properties" />-->
+</beans>
