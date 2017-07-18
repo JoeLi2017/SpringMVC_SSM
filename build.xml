@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns:artifact="antlib:org.apache.maven.artifact.ant" name="fisherCoffeeFront" default="0 - default" basedir=".">
+<project xmlns:artifact="antlib:org.apache.maven.artifact.ant" name="JavaTest" default="0 - default" basedir=".">
     <description>Builds, tests, and runs the project dsolrcloud.</description>
 
     <!-- 配置开发环境 -->
     <property environment="env"/>
 
     <property name="version" value="1.0"/>
-    <property name="project" value="fisherCoffeeFront"/>
-    <property name="package" value="fisherCoffeeFront"/>
-    <property name="domain" value="net"/>
+    <property name="project" value="JavaTest"/>
+    <property name="package" value="happy"/>
+    <property name="domain" value="com"/>
 
     <!-- 项目源代码目录 -->
     <property name="src.dir" location="src/main/java"/>
@@ -118,7 +118,7 @@
         </war>
     </target>
 
-    <target name="0 - default" depends="1 - clean, 5 - package, 6 - javadoc">
+    <target name="run" depends="1 - clean, 5 - package, 6 - javadoc">
     </target>
 
 </project>
