@@ -71,7 +71,7 @@
                destdir="${build.dir}"
                encoding="UTF-8"
                includeantruntime="no"
-               excludes="**/test/*,**/test/bean/*,**/*.svn,*.svn"
+               excludes="**/test/*,**/test/bean/*,**/*.git,*.git"
                includes="**/*.java"
                source="1.7"
                target="1.7"
@@ -91,7 +91,7 @@
     <target name="6 - javadoc" description="生成Javadoc文档">
         <delete dir="${doc.dir}"/>
         <mkdir dir="${doc.dir}"/>
-        <javadoc packagenames="com.bluedream.*" sourcepath="${src.dir}" destdir="${doc.dir}"
+        <javadoc packagenames="com.happy.*" sourcepath="${src.dir}" destdir="${doc.dir}"
                  windowtitle="${project} Javadoc" use="yes"
                  linksource="no" splitindex="yes" encoding="UTF-8"
                  docencoding="GBK" locale="zh_CN">
