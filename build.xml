@@ -38,7 +38,7 @@
     </path>
 
     <target name="1 - clean" description="清理ant编译文件">
-        <delete dir="target" />
+        <!--<delete dir="target" />-->
     </target>
 
     <target name="2 - makedir" description="建立文件夹">
