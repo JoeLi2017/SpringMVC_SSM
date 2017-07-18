@@ -103,19 +103,19 @@
     </target>
 
     <target name="5 - package" depends="4 - compile" description="打war包" >
-        <mkdir dir="${dist.dir}/${version}" />
+        <!--<mkdir dir="${dist.dir}/${version}" />
         <tstamp>
             <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss"/>
             <format property="TIME" pattern="yyMMddHHmm"/>
-        </tstamp>
+        </tstamp>-->
 
         <!-- 生成Web配置及部署文件 -->
-        <war destfile="${dist.dir}/${version}/${project}.v${TIME}.war"
+        <!--<war destfile="${dist.dir}/${version}/${project}.v${TIME}.war"
              webxml="${web.root}/WEB-INF/web.xml" manifest="${web.root}/META-INF/MANIFEST.MF">
             <fileset dir="${web.root}" excludes="${web.root}/WEB-INF/classes/*" />
             <classes dir="${build.dir}" />
             <lib dir="${lib.dir}" includes="**/*.jar" />
-        </war>
+        </war>-->
     </target>
 
     <target name="run" depends="1 - clean, 5 - package, 6 - javadoc">
